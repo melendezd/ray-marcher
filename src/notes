@@ -1,0 +1,32 @@
+World:
+struct World {
+    level: VoxelLevel
+    ECS registry
+    triggers
+    etc
+    just level data
+}
+
+struct DenseCartesian: 
+
+Gfx:
+
+
+March:
+trait SDF {
+}
+
+struct 
+
+
+
+
+
+SDF:
+trait SDF<K, V {
+    fn get
+}
+
+
+
+
