@@ -4,6 +4,7 @@ mod march;
 mod types;
 mod uniforms;
 mod world;
+mod world_loader;
 
 extern crate derive_more;
 
@@ -78,6 +79,7 @@ fn main() {
     let mut renderer = gfx::DenseCartesianRenderer {
         uniforms: DenseCartesianUniforms {
             sdf: game.world.sdf.as_gpu_resource(&display),
+            voxels: game.world.voxels.as_gpu_resource(&display),
         },
     };
     let mut window_focused = false;

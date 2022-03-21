@@ -14,6 +14,7 @@ pub const SHADER_PATH_NAME: &str = "src/shaders";
 
 pub struct DenseCartesianUniforms {
     pub sdf: UnsignedTexture3d,
+    pub voxels: UnsignedTexture3d,
 }
 
 pub struct DenseCartesianRenderer {
@@ -23,6 +24,7 @@ pub struct DenseCartesianRenderer {
 impl DenseCartesianRenderer {
     fn update_uniforms(&mut self, facade: &dyn glium::backend::Facade, game: &Game) {
         self.uniforms.sdf = game.world.sdf.as_gpu_resource(facade);
+        self.uniforms.voxels = game.world.voxels.as_gpu_resource(facade);
     }
 
     pub fn draw(
@@ -61,7 +63,8 @@ impl DenseCartesianRenderer {
             near: near,
             time: game.time_elapsed.as_secs_f32(),
             aspect_ratio: aspect_ratio,
-            sdf_data: &self.uniforms.sdf
+            sdf_data: &self.uniforms.sdf,
+            voxels: &self.uniforms.voxels,
         };
 
         // drawing a frame

@@ -16,3 +16,4 @@ pub type Dimension3 = (usize, usize, usize);
 pub type Dimension2 = (usize, usize);
 
 pub type Idx3 = (usize, usize, usize);
+pub type Color = (u8, u8, u8);

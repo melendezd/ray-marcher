@@ -11,6 +11,8 @@ use std::time::{Duration, SystemTime};
 
 use crate::world::{Space, WORLD_DIM};
 
+use std::fs::File;
+
 
 pub struct Game {
     pub begin_time: SystemTime,
@@ -28,6 +30,7 @@ impl Game {
     const MOUSE_SPEED: f32 = 1.0;
 
     pub fn new() -> Game {
+        let mut file = File::open("res/levels/test.gox").unwrap();
         Game {
             begin_time: SystemTime::now(),
             time_elapsed: Duration::from_millis(0),
@@ -43,7 +46,7 @@ impl Game {
                 ..Default::default()
             },
             mouse_delta: (0.0, 0.0),
-            world: Space::new(WORLD_DIM),
+            world: Space::from_gox(WORLD_DIM, &mut file),
             walk_speed: 1.0,
         }
     }

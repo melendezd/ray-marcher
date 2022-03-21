@@ -8,6 +8,7 @@ uniform float aspect_ratio;
 uniform float time;
 
 uniform usampler3D sdf_data;
+uniform usampler3D voxels;
 
 #define MAX_STEPS 1000
 #define STEP_SIZE 0.01
@@ -20,10 +21,17 @@ out vec4 f_color;
 
 #define PI 3.14159265358979
 
+#define VOX_RED   1
+#define VOX_BLUE  2
+#define VOX_GREEN 3
+
 const ivec3 sdf_size = textureSize(sdf_data, 0);
 
 int sdf(vec3 p);
+int voxel(vec3 p);
+
 vec3 next_point(vec3 pos, vec3 dir);
+
 vec3 hsv2rgb(vec3 c);
 vec3 rgb2hsv(vec3 c);
 
@@ -47,9 +55,21 @@ void main() {
             // hit a voxel! give it a pretty color for now
             vec3 rel = v - cam_pos;
             float dist = dot(rel, rel);
-            f_color = vec4(normalize(v - cam_pos), 1);
-            f_color = ((STEP_SIZE * MAX_STEPS) / (dist/10)) * f_color;
-            f_color = abs(f_color);
+            float light_factor = ((STEP_SIZE * MAX_STEPS) / (dist/10));
+            //vec4 fun_color = abs(0.2 * vec4(normalize(v - cam_pos), 1));
+            vec4 base_color = vec4(0,0,0,0);
+            unsigned int vox = voxel(v);
+
+            if (vox == VOX_RED)
+                base_color = vec4(1, 0, 0, 1);
+            else if (vox == VOX_BLUE)
+                base_color = vec4(0, 0, 1, 1);
+            else if (vox == VOX_GREEN)
+                base_color = vec4(0, 1, 0, 1);
+            else
+                base_color = vec4(1, 0, 1, 1);
+
+            f_color = abs(light_factor *  base_color);
 
             vec3 hsv = rgb2hsv(f_color.rgb);
             hsv.y = 0.99;
@@ -85,6 +105,14 @@ int sdf(vec3 p) {
         return 0;
     }
     return int(texelFetch(sdf_data, ivec3(p), 0).r);
+}
+
+// Gets the id (voxel type) of the voxel at the given position
+int voxel(vec3 p) {
+    if (any(greaterThanEqual(p, sdf_size - 1)) || any(lessThan(p, vec3(0)))) {
+        return 0;
+    }
+    return int(texelFetch(voxels, ivec3(p), 0).r);
 }
 
 
